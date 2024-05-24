@@ -1,33 +1,34 @@
 #include "Touch.h"
+#define fingers 9 
 
-#define fingers 3 
-
-unsigned long previousMillis = 0;     // will store last time LED was updated
-unsigned long interval;               // interval at which to blink (milliseconds)
+unsigned long previousMillis = 0;
+unsigned long interval;
 
 void setup() {
-  
   randomSeed(analogRead(0));
   Touch.begin();
 }
 
 void loop() {
-  uint16_t xStart = 500;
-  uint16_t xDelta = 2200;  
+  
+  uint16_t xStart = 100;              // Spot size
+  uint16_t xDelta = 240;              // 240 PC, 500 Android
   uint16_t xStop = xStart + xDelta;
-
   uint16_t yStart = 5000;
-  uint16_t yStop = 5500;
+  uint16_t yDelta = 240;
+  uint16_t yStop = yStart + yDelta;
+  uint16_t xStep = 250;
+  uint16_t yStep = 500;
   
   unsigned long currentMillis = millis();
-//  interval = 50000 / 10 + analogRead(A3);
-  interval = 5*(10 + analogRead(A3));  
+
+  interval = 40 + 3*analogRead(A3);
   
   if (currentMillis - previousMillis >= interval) {
-    for (uint8_t i=0; i <= fingers; i++){
-      Touch.moveFingerTo(i+1, xDelta*i + random(xStart, xStop), random(yStart, yStop));    
-      Touch.releaseFinger(i+1);
-      delay(10);     
+    for (uint8_t i=1; i < fingers; i++){
+      Touch.moveFingerTo(i, xStep*i + random(xStart, xStop), yStep*(i%2) + random(yStart, yStop));    
+      Touch.releaseFinger(i);
+      delay(5);     
     }
      
     previousMillis = currentMillis;  
